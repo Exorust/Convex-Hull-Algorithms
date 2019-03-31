@@ -5,6 +5,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define MAX 1000.00
+
 class Point {
 private:
 public:
@@ -21,6 +23,9 @@ public:
       return a.y<b.y;
     }
   }
+
+  bool equal(Point*);
+
   void print_point();
   Point & operator = (const Point &);
   bool  operator < (const Point &);

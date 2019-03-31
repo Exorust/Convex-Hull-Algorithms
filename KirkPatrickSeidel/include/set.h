@@ -18,15 +18,20 @@ public:
 
   int size();
   void add(Point);
+
+  //ONLY FOR TESTING
   void sorting();
-  //DONT USE YET
   float median();
+
+  Point* minimum();
+  Point* maximum();
+
   pair<Set*,Set*>* partition();
   void joining(const Set*);
 
   bool ismin(Point*);
   bool ismax(Point*);
-  
+
 
   void print_list();
 

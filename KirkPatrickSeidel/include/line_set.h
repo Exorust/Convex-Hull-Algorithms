@@ -11,12 +11,14 @@ class LineSet{
 // private:
 public:
   int total_points;
-  vector<pair<Point,Point> > point_list;
+  vector<Point> point_list;
 
   LineSet();
 
   void joining(const LineSet*);
-  void add(pair<Point*,Point*>*);
+  void add(Point*);
+  void add(Point);
+  void add(pair<Point*, Point*>*);
   void printing();
 
 };

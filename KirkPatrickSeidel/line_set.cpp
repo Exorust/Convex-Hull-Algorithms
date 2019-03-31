@@ -12,24 +12,40 @@ LineSet::LineSet() {
 
 
 void LineSet::joining(const LineSet* input) {
-  vector<pair<Point,Point> >::const_iterator it;
+  vector<Point >::const_iterator it;
   for(it = input->point_list.begin();it != input->point_list.end();it++) {
     this-> point_list.push_back(*it);
   }
 }
 
-void LineSet::add(pair<Point*,Point*>* input) {
-  pair<Point,Point> p_temp;
-  // p_temp.first = *(input->first);
-  // p_temp.second = *(input->second);
+void LineSet::add(Point* input) {
+  Point p_temp;
+  p_temp.x = input->x;
+  p_temp.y= input->y;
+  this-> point_list.push_back(p_temp);
+}
+
+void LineSet::add(pair<Point*, Point*>* input) {
+  // Point p_temp;
+  // p_temp.x = input->first->x;
+  // p_temp.y= input->first->y;
+  // this-> point_list.push_back(p_temp);
+  this->add(input->first);
+  this->add(input->second);
+}
+
+void LineSet::add(Point input) {
+  Point p_temp;
+  p_temp.x = input.x;
+  p_temp.y= input.y;
   this-> point_list.push_back(p_temp);
 }
 
 void LineSet::printing() {
-  vector<pair<Point,Point> >::const_iterator it;
+  vector<Point>::iterator it;
   for(it = this->point_list.begin();it != this->point_list.end();it++) {
-    printf("(%f %f)   (%f %f)\n", it->first.x,it->first.y,it->second.x,it->second.y );
-    // it->first.print_point();
+    // printf("(%f %f)   (%f %f)\n", it->first.x,it->first.y,it->second.x,it->second.y );
+    it->print_point();
     // printf("\t\t");
     // it->second.print_point();
   }
