@@ -31,7 +31,7 @@ bool AlmostEqualRelative(float A, float B,float maxRelDiff = FLT_EPSILON)
     B = fabs(B);
     // Find the largest
     float largest = (B > A) ? B : A;
- 
+
     if (diff <= largest * maxRelDiff)
         return true;
     return false;
@@ -51,7 +51,7 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
     printf("U-Bridge %d END (2PT)\n", input.size() );
     return point_bridge;
   }
-  
+
   vector<pair<pair<Point,Point>,float> > LR_pairing;
 
   for(int index = 0;index < (input.size()/2);index++) {
@@ -76,25 +76,25 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
       LR_pairing.push_back(temp);
     }
   }
-  
+
   if(input.size()%2 !=0 ) {
     candidates.point_list.push_back(input.point_list[input.size()/2]);
   }
 
   sort(LR_pairing.begin(),LR_pairing.end(),sortbysec);
 
-  
+
   float K_median = LR_pairing[LR_pairing.size() / 2].second;
   printf("K_median: %f\n", K_median );
 
-  
+
   vector<pair<pair<Point,Point>,float> > small,equal,large;
- 
+
   for(auto &it :LR_pairing) {
     printf("%f ", it.second );
     if(it.second < K_median) {
       small.push_back(it);
-      
+
     }
     else if(it.second == K_median) {
       equal.push_back(it);
@@ -155,10 +155,10 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   Point pm_max(max[max.size()-1]);
   pm_max.print_point();
   printf("\n");
-
+  cout<<"x median: "<<x_median<<endl;
   //Is h bridge?
   pair<Point,Point> final_val;
-  if(pk_min.x < x_median && pm_max.x > x_median) {
+  if(pk_min.x <= x_median && pm_max.x > x_median) {
     final_val.first = pk_min;
     final_val.second = pm_max;
     return final_val;
@@ -166,7 +166,7 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
 
   //h is only on the left
   if(pm_max.x <= x_median) {
-    
+
     for(auto& it : large) {
       Point temp(it.first.second.x,it.first.second.y);
       candidates.add(temp);
@@ -213,10 +213,10 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 
   LineSet con_hull;
   float x_median = input.median();
-  
+
   if(p_min.x == p_max.x && p_min.y == p_max.y ) {
     con_hull.add(p_min);
-    printf("Hit edge\n");
+    printf("Hit edge Equality \n");
     return con_hull;
   }
 
@@ -241,6 +241,9 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
   Point tempj(j.x,j.y);
   L_dash.add(tempi);
   R_dash.add(tempj);
+  //See
+  L_dash.add(p_min);
+  R_dash.add(p_max);
 
   //L_dash
   for(auto& it :input.point_list) {
@@ -265,9 +268,9 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
       R_dash.add(temp);
     }
   }
-  
+
   cout<<"printing r dash"<<endl;
-  R_dash.print_list();  
+  R_dash.print_list();
 
     LineSet L_upper_hull = upper_hull(p_min, i, L_dash);
     cout<<"L uh";
