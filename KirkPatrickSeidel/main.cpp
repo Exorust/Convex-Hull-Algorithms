@@ -294,36 +294,99 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 
 }
 
-LineSet kirk_patrick_seidel(Set input) {
+LineSet kps_util(Set input) {
 
   //TODO: Change a new Con hull object`
-  input.sorting();
+  cout<<endl<<"upper:"<<endl;
   Point u_min = input.u_minimum();
   Point u_max = input.u_maximum();
-  cout<<"Upper";
   u_max.print_point();
   u_min.print_point();
   LineSet upper = upper_hull(u_min,u_max,input);
-  // upper.add(u_min);
-  // upper.add(u_max);
-  // Set* lower = lower_hull(input);
-  // upper->join(lower);
+  cout<<"upper ended"<<endl<<endl<<endl;
+
+
+  Set reflect_input;
+  for(auto &it:input.point_list){ 
+      Point temp(it.x,-it.y);
+      reflect_input.add(temp);
+  }
+
+  cout<<"lower:"<<endl;
+  Point l_min = reflect_input.u_minimum();
+  Point l_max = reflect_input.u_maximum();
+  l_max.print_point();
+  l_min.print_point();
+  LineSet lower = upper_hull(l_min,l_max,reflect_input);
+  cout<<"lower ended"<<endl<<endl<<endl;
+
+  int count=0;
+  int n_lower=lower.point_list.size();
+
+
+  //TODO: if you want you can reverse the direction at your own risk
+  for(auto &it:lower.point_list){ 
+      it.y=-it.y;
+      if(count==0)
+      {
+        if(!it.equal(u_min))
+          upper.add(it);        
+      }
+
+      else if(count==(n_lower-1))
+      {
+        if(!it.equal(u_max))
+          upper.add(it);
+      }
+      else
+        upper.add(it);
+      count++;
+  }
   return upper;
 }
 
+LineSet kirk_patrick_seidel(Set input) {
+
+  cout<<"upper:"<<endl;
+  LineSet upper=kps_util(input);
+  upper.printing();
+  cout<<"upper ended"<<endl<<endl<<endl;
+
+  Set reflect_input;
+  for(auto &it:input.point_list){ 
+      Point temp(it.x,-it.y);
+      reflect_input.add(temp);
+  }
+
+  cout<<"lower:"<<endl;
+  LineSet lower=kps_util(reflect_input);
+
+  for(auto &it:lower.point_list){ 
+      it.y=-it.y;
+  }
+
+  lower.printing();
+
+  cout<<"lower ended"<<endl<<endl<<endl;
+
+  return upper;
+}
 
 int main(int argc, char const *argv[]) {
   printf("Enter the number of points\n");
   int total_points;
   scanf("%d",&total_points);
   Set all_points;
+  // Set rev_points;
   for(int index = 0;index<total_points;index++) {
     float x,y;
     scanf("%f %f", &x,&y );
     Point p(x,y);
+    // Point rev(x,-y);
     all_points.add(p);
+    // rev_points.add(rev);
   }
-  all_points.sorting();
+  
 
   // //Testing
   // all_points->sorting();
@@ -336,6 +399,9 @@ int main(int argc, char const *argv[]) {
 
   LineSet result = kirk_patrick_seidel(all_points);
   result.printing();
+
+  // LineSet resultl = kirk_patrick_seidel(rev_points);
+  // resultl.printing();
 
 
   return 0;
