@@ -23,8 +23,8 @@ public:
   void sorting();
   float median();
 
-  Point minimum();
-  Point maximum();
+  Point u_minimum();
+  Point u_maximum();
 
   pair<Set*,Set*>* partition();
   void joining(const Set);

@@ -4,6 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 Set::Set() {
   total_points = 0;
 }
@@ -28,15 +29,43 @@ int Set::size() {
   return point_list.size();
 }
 
-Point Set::minimum() {
-  sorting();
+Point Set::u_minimum() {
   Point temp(this->point_list[0]);
+  float x_val = temp.x;
+  float y_val = temp.y;
+  for(auto& it : this->point_list) {
+    if(x_val > it.x) {
+      temp.x = it.x;
+      temp.y = it.y;
+    }
+    else if(x_val==it.x)
+    {
+      if(y_val < it.y)
+      {
+        temp.y=y_val=it.y;
+      }
+    }
+  }
   return temp;
 }
 
-Point Set::maximum() {
-  sorting();
-  Point temp(this->point_list[point_list.size()-1]);
+Point Set::u_maximum() {
+  Point temp(this->point_list[0]);
+  float x_val = temp.x;
+  float y_val = temp.y;
+  for(auto& it : this->point_list) {
+    if(x_val < it.x) {
+      temp.x = it.x;
+      temp.y = it.y;
+    }
+    else if(x_val==it.x)
+    {
+      if(y_val < it.y)
+      {
+        temp.y=y_val=it.y;
+      }
+    }
+  }
   return temp;
 }
 

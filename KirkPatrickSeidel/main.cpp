@@ -112,7 +112,7 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
 
   vector<pair<float,Point> > value_k;
 
-  float max_value=DBL_MIN;
+  float max_value= - FLT_MAX;
 
   for(auto &itx : input.point_list) {
     pair<float,Point> temp;
@@ -297,8 +297,12 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 LineSet kirk_patrick_seidel(Set input) {
 
   //TODO: Change a new Con hull object`
-  Point u_min = input.minimum();
-  Point u_max = input.maximum();
+  input.sorting();
+  Point u_min = input.u_minimum();
+  Point u_max = input.u_maximum();
+  cout<<"Upper";
+  u_max.print_point();
+  u_min.print_point();
   LineSet upper = upper_hull(u_min,u_max,input);
   // upper.add(u_min);
   // upper.add(u_max);
