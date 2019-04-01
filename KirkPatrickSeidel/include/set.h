@@ -23,14 +23,14 @@ public:
   void sorting();
   float median();
 
-  Point* minimum();
-  Point* maximum();
+  Point minimum();
+  Point maximum();
 
   pair<Set*,Set*>* partition();
-  void joining(const Set*);
+  void joining(const Set);
 
-  bool ismin(Point*);
-  bool ismax(Point*);
+  bool ismin(Point);
+  bool ismax(Point);
 
 
   void print_list();

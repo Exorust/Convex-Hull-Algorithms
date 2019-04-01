@@ -28,15 +28,15 @@ int Set::size() {
   return point_list.size();
 }
 
-Point* Set::minimum() {
+Point Set::minimum() {
   sorting();
-  Point* temp = new Point(this->point_list[0]);
+  Point temp(this->point_list[0]);
   return temp;
 }
 
-Point* Set::maximum() {
+Point Set::maximum() {
   sorting();
-  Point* temp = new Point(this->point_list[point_list.size()-1]);
+  Point temp(this->point_list[point_list.size()-1]);
   return temp;
 }
 
@@ -65,31 +65,31 @@ void Set::print_list() {
   }
 }
 
-void Set::joining(const Set* input) {
+void Set::joining(const Set input) {
   vector<Point>::const_iterator it;
-  for(it = input->point_list.begin();it != input->point_list.end();it++) {
+  for(it = input.point_list.begin();it != input.point_list.end();it++) {
     this-> point_list.push_back(*it);
     total_points++;
   }
   sorting();
 }
 
-bool Set::ismin(Point* p) {
+bool Set::ismin(Point p) {
   sorting();
   vector<Point>::iterator it = this->point_list.begin();
   // if(it->x == p->x && it->y == p->y) {
-  if(it->x == p->x ) {
+  if(it->x == p.x ) {
     return true;
   }
   return false;
 }
 
-bool Set::ismax(Point* p) {
+bool Set::ismax(Point p) {
   sorting();
   vector<Point>::iterator it = this->point_list.end();
   it--;
   // if(it->x == p->x && it->y == p->y) {
-  if(it->x == p->x ) {
+  if(it->x == p.x ) {
     return true;
   }
   return false;

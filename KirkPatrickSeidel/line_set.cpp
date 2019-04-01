@@ -11,27 +11,19 @@ LineSet::LineSet() {
 }
 
 
-void LineSet::joining(const LineSet* input) {
-  vector<Point >::const_iterator it;
-  for(it = input->point_list.begin();it != input->point_list.end();it++) {
-    this-> point_list.push_back(*it);
+void LineSet::joining(const LineSet input) {
+  for(auto& it : input.point_list) {
+    this-> point_list.push_back(it);
   }
 }
 
-void LineSet::add(Point* input) {
-  Point p_temp;
-  p_temp.x = input->x;
-  p_temp.y= input->y;
-  this-> point_list.push_back(p_temp);
-}
-
-void LineSet::add(pair<Point*, Point*>* input) {
+void LineSet::add(pair<Point, Point> input) {
   // Point p_temp;
   // p_temp.x = input->first->x;
   // p_temp.y= input->first->y;
   // this-> point_list.push_back(p_temp);
-  this->add(input->first);
-  this->add(input->second);
+  this->add(input.first);
+  this->add(input.second);
 }
 
 void LineSet::add(Point input) {

@@ -24,7 +24,7 @@ public:
     }
   }
 
-  bool equal(Point*);
+  bool equal(Point);
 
   void print_point();
   Point & operator = (const Point &);

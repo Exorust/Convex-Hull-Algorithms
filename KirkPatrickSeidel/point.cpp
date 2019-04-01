@@ -32,8 +32,8 @@ Point & Point::operator = (const Point &p) {
   return *this;
 }
 
-bool Point::equal(Point* p) {
-  if(this->x == p->x && this->y == p->y) {
+bool Point::equal(Point p) {
+  if(this->x == p.x && this->y == p.y) {
     return true;
   }
   return false;

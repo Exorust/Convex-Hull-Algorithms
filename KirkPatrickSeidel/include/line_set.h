@@ -15,10 +15,9 @@ public:
 
   LineSet();
 
-  void joining(const LineSet*);
-  void add(Point*);
+  void joining(const LineSet);
   void add(Point);
-  void add(pair<Point*, Point*>*);
+  void add(pair<Point, Point>);
   void printing();
 
 };
