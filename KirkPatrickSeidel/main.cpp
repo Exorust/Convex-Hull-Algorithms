@@ -7,6 +7,9 @@
 #include <stdlib.h>
 using namespace std;
 
+ofstream myfile;
+ofstream inputfile;
+
 bool sortbysec(const pair<pair<Point,Point>,float> &a, const  pair<pair<Point,Point>,float> &b) {
     return (a.second < b.second);
 }
@@ -23,19 +26,19 @@ float sign(Point* p1, Point* p2, Point* p) {
   return d;
 }
 
-bool AlmostEqualRelative(float A, float B,float maxRelDiff = FLT_EPSILON)
-{
-    // Calculate the difference.
-    float diff = fabs(A - B);
-    A = fabs(A);
-    B = fabs(B);
-    // Find the largest
-    float largest = (B > A) ? B : A;
+// bool AlmostEqualRelative(float A, float B,float maxRelDiff = FLT_EPSILON)
+// {
+//     // Calculate the difference.
+//     float diff = fabs(A - B);
+//     A = fabs(A);
+//     B = fabs(B);
+//     // Find the largest
+//     float largest = (B > A) ? B : A;
 
-    if (diff <= largest * maxRelDiff)
-        return true;
-    return false;
-}
+//     if (diff <= largest * maxRelDiff)
+//         return true;
+//     return false;
+// }
 
 pair<Point,Point> upper_bridge(Set input, float x_median) {
   pair<Point,Point> point_bridge;
@@ -43,6 +46,11 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   input.print_list();
 
   Set candidates;
+  if(input.size()==1)
+  {
+    return make_pair(input.point_list[0],input.point_list[0]);
+  }
+  
   if(input.size() == 2) {
     Point first(input.point_list[0].x,input.point_list[0].y);
     Point second(input.point_list[1].x,input.point_list[1].y);
@@ -294,7 +302,7 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 
 }
 
-LineSet kps_util(Set input) {
+LineSet kirk_patrick_seidel(Set input) {
 
   //TODO: Change a new Con hull object`
   cout<<endl<<"upper:"<<endl;
@@ -308,7 +316,7 @@ LineSet kps_util(Set input) {
 
   Set reflect_input;
   for(auto &it:input.point_list){ 
-      Point temp(it.x,-it.y);
+      Point temp(-it.x,-it.y);
       reflect_input.add(temp);
   }
 
@@ -325,15 +333,16 @@ LineSet kps_util(Set input) {
 
 
   //TODO: if you want you can reverse the direction at your own risk
-  for(auto &it:lower.point_list){ 
+  for(auto &it:lower.point_list){
+      it.x=-it.x; 
       it.y=-it.y;
-      if(count==0)
+      if(count==(n_lower-1))
       {
         if(!it.equal(u_min))
           upper.add(it);        
       }
 
-      else if(count==(n_lower-1))
+      else if(count==0)
       {
         if(!it.equal(u_max))
           upper.add(it);
@@ -345,34 +354,14 @@ LineSet kps_util(Set input) {
   return upper;
 }
 
-LineSet kirk_patrick_seidel(Set input) {
-
-  cout<<"upper:"<<endl;
-  LineSet upper=kps_util(input);
-  upper.printing();
-  cout<<"upper ended"<<endl<<endl<<endl;
-
-  Set reflect_input;
-  for(auto &it:input.point_list){ 
-      Point temp(it.x,-it.y);
-      reflect_input.add(temp);
-  }
-
-  cout<<"lower:"<<endl;
-  LineSet lower=kps_util(reflect_input);
-
-  for(auto &it:lower.point_list){ 
-      it.y=-it.y;
-  }
-
-  lower.printing();
-
-  cout<<"lower ended"<<endl<<endl<<endl;
-
-  return upper;
-}
 
 int main(int argc, char const *argv[]) {
+
+  myfile.open("example.csv");
+  inputfile.open("input.csv");
+  myfile<<"x,y"<<endl;
+  inputfile<<"x,y"<<endl;
+
   printf("Enter the number of points\n");
   int total_points;
   scanf("%d",&total_points);
@@ -382,10 +371,13 @@ int main(int argc, char const *argv[]) {
     float x,y;
     scanf("%f %f", &x,&y );
     Point p(x,y);
+    inputfile<<x<<","<<y<<endl;
     // Point rev(x,-y);
     all_points.add(p);
     // rev_points.add(rev);
   }
+
+
   
 
   // //Testing
@@ -398,7 +390,17 @@ int main(int argc, char const *argv[]) {
   // p->second->print_list();
 
   LineSet result = kirk_patrick_seidel(all_points);
+
+
+  for(auto &it: result.point_list)
+  {
+    myfile<<it.x<<","<<it.y<<endl;
+  }
+  myfile<<result.point_list[0].x<<","<<result.point_list[0].y<<endl;
   result.printing();
+
+  myfile.close();
+  inputfile.close();
 
   // LineSet resultl = kirk_patrick_seidel(rev_points);
   // resultl.printing();
