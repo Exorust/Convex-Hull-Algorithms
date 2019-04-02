@@ -15,4 +15,5 @@ y_output = df_output[:, 1]
 
 plt.plot(x_output, y_output, c='b')
 plt.scatter(x_input,y_input,c='r')
+plt.scatter(x_output, y_output, c='b')
 plt.show()
