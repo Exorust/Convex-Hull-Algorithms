@@ -30,40 +30,48 @@ int Set::size() {
 }
 
 Point Set::u_minimum() {
-  Point temp(this->point_list[0]);
+  Point temp(point_list[0]);
   float x_val = temp.x;
   float y_val = temp.y;
-  for(auto& it : this->point_list) {
-    if(x_val > it.x) {
-      temp.x = it.x;
-      temp.y = it.y;
-    }
-    else if(x_val==it.x)
+  for(auto& it : point_list) {
+    if(it.x<= x_val+0.00001 && it.x >= x_val-0.00001)
     {
       if(y_val < it.y)
       {
-        temp.y=y_val=it.y;
+        temp.y= it.y;
+        y_val= it.y;
       }
+    }
+
+    else if(x_val > it.x) {
+      temp.x = it.x;
+      x_val = it.x;
+      y_val = it.y;
+      temp.y = it.y;
     }
   }
   return temp;
 }
 
 Point Set::u_maximum() {
-  Point temp(this->point_list[0]);
+  Point temp(point_list[0]);
   float x_val = temp.x;
   float y_val = temp.y;
-  for(auto& it : this->point_list) {
-    if(x_val < it.x) {
-      temp.x = it.x;
-      temp.y = it.y;
-    }
-    else if(x_val==it.x)
+  for(auto& it : point_list) {
+    if(it.x<= x_val+0.00001 && it.x >= x_val-0.00001)
     {
       if(y_val < it.y)
       {
-        temp.y=y_val=it.y;
+        temp.y=it.y;
+        y_val = it.y;
       }
+    }
+
+    else if(x_val < it.x) {
+      temp.x =it.x;
+      x_val =it.x;
+      y_val =it.y;
+      temp.y = it.y;
     }
   }
   return temp;
@@ -72,19 +80,17 @@ Point Set::u_maximum() {
 void Set::add(Point p) {
   this-> point_list.push_back(p);
   total_points++;
-  sorting();
+  // sorting();
 }
 
 void Set::sorting() {
   sort(Set::point_list.begin(),Set::point_list.end(),Point::ValueCmp);
 }
 
-float Set::median() {
-  sorting();
-  int len = point_list.size();
-  // Median irrespective of odd/even
-  return point_list[len/2].x;
-}
+
+//median function----------------------------------------------------------------------------
+
+//median function------------------------------------------------------------------------------
 
 void Set::print_list() {
   vector<Point>::iterator it;
@@ -100,11 +106,11 @@ void Set::joining(const Set input) {
     this-> point_list.push_back(*it);
     total_points++;
   }
-  sorting();
+  // sorting();
 }
 
 bool Set::ismin(Point p) {
-  sorting();
+  // sorting();
   vector<Point>::iterator it = this->point_list.begin();
   // if(it->x == p->x && it->y == p->y) {
   if(it->x == p.x ) {
@@ -114,7 +120,7 @@ bool Set::ismin(Point p) {
 }
 
 bool Set::ismax(Point p) {
-  sorting();
+  // sorting();
   vector<Point>::iterator it = this->point_list.end();
   it--;
   // if(it->x == p->x && it->y == p->y) {
@@ -127,7 +133,7 @@ bool Set::ismax(Point p) {
 
 
 pair<Set*,Set*>* Set::partition() {
-  sorting();
+  // sorting();
   int len = point_list.size();
 
   vector<Point> lv(point_list.begin(),point_list.begin() + (len/2));

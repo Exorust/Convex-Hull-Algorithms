@@ -10,10 +10,161 @@ using namespace std;
 ofstream myfile;
 ofstream inputfile;
 
+
+Point calpk_min(vector<Point>max){
+  Point min_point(max[0].x,max[0].y);
+  for(auto &it:max)
+  {
+    if(min_point.x>it.x)
+    {
+      min_point.x=it.x;
+      min_point.y=it.y;
+    }
+  }
+  return min_point;
+}
+
+Point calpm_max(vector<Point>max){
+  Point min_point(max[0].x,max[0].y);
+  for(auto &it:max)
+  {
+    if(min_point.x<it.x)
+    {
+      min_point.x=it.x;
+      min_point.y=it.y;
+    }
+  }
+  return min_point;
+}
+bool float_equal(float x, float y)
+{
+  if(x<= y+0.00001 && x >= y-0.00001)
+    return true;
+  return false;
+}
+
+
+
+//median-------------------------------------------------------------------------------------
+void swap(float *a, float *b)
+{
+    float temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// It searches for x in arr[l..r], and partitions the array
+// around x.
+int partition(float arr[], int l, int r, float x)
+{
+    // Search for x in arr[l..r] and move it to end
+    int i;
+    for (i=l; i<r; i++)
+        if (arr[i] == x)
+           break;
+    swap(&arr[i], &arr[r]);
+
+    // Standard partition algorithm
+    i = l;
+    for (int j = l; j <= r - 1; j++)
+    {
+        if (arr[j] <= x)
+        {
+            swap(&arr[i], &arr[j]);
+            i++;
+        }
+    }
+    swap(&arr[i], &arr[r]);
+    return i;
+}
+
+
+// A simple function to find median of arr[].  This is called
+// only for an array of size 5 in this program.
+float findMedian(float arr[], int n)
+{
+    sort(arr, arr+n);  // Sort the array
+    return arr[n/2];   // Return middle element
+}
+
+// Returns k'th smallest element in arr[l..r] in worst case
+// linear time. ASSUMPTION: ALL ELEMENTS IN ARR[] ARE DISTINCT
+float kthSmallest(float arr[], int l, int r, int k)
+{
+    // If k is smaller than number of elements in array
+    if (k > 0 && k <= r - l + 1)
+    {
+        int n = r-l+1; // Number of elements in arr[l..r]
+
+        // Divide arr[] in groups of size 5, calculate median
+        // of every group and store it in median[] array.
+        int i;
+        float median[(n+4)/5]; // There will be floor((n+4)/5) groups;
+        for (i=0; i<n/5; i++)
+            median[i] = findMedian(arr+l+i*5, 5);
+        if (i*5 < n) //For last group with less than 5 elements
+        {
+            median[i] = findMedian(arr+l+i*5, n%5);
+            i++;
+        }
+
+        // Find median of all medians using recursive call.
+        // If median[] has only one element, then no need
+        // of recursive call
+        float medOfMed = (i == 1)? median[i-1]:
+                                 kthSmallest(median, 0, i-1, i/2);
+
+        // Partition the array around a random element and
+        // get position of pivot element in sorted array
+        int pos = partition(arr, l, r, medOfMed);
+
+        // If position is same as k
+        if (pos-l == k-1)
+            return arr[pos];
+        if (pos-l > k-1)  // If position is more, recur for left
+            return kthSmallest(arr, l, pos-1, k);
+
+        // Else recur for right subarray
+        return kthSmallest(arr, pos+1, r, k-pos+l-1);
+    }
+
+    // If k is more than number of elements in array
+    return FLT_MAX;
+}
+
+
+float median(Set input) {
+  int len = input.point_list.size();
+  float arr[len];
+  int i=0;
+
+  for(auto it:input.point_list)
+  {
+    arr[i++]=it.x;
+  }
+  // Median irrespective of odd/even
+  return kthSmallest(arr,0,len-1,len/2+1);
+}
+
+float median(vector<pair<pair<Point,Point>,float> > input) {
+  int len = input.size();
+  float arr[len];
+  int i=0;
+
+  for(auto it:input)
+  {
+    arr[i++]=it.second;
+  }
+  // Median irrespective of odd/even
+  return kthSmallest(arr,0,len-1,len/2+1);
+}
+//median------------------------------------------------------------------------
+
+
+
 bool sortbysec(const pair<pair<Point,Point>,float> &a, const  pair<pair<Point,Point>,float> &b) {
     return (a.second < b.second);
 }
-
 
 bool sortbysecpf(const pair<float,Point> &a, const  pair<float,Point> &b) {
     return (a.first < b.first);
@@ -26,20 +177,6 @@ float sign(Point* p1, Point* p2, Point* p) {
   return d;
 }
 
-// bool AlmostEqualRelative(float A, float B,float maxRelDiff = FLT_EPSILON)
-// {
-//     // Calculate the difference.
-//     float diff = fabs(A - B);
-//     A = fabs(A);
-//     B = fabs(B);
-//     // Find the largest
-//     float largest = (B > A) ? B : A;
-
-//     if (diff <= largest * maxRelDiff)
-//         return true;
-//     return false;
-// }
-
 pair<Point,Point> upper_bridge(Set input, float x_median) {
   pair<Point,Point> point_bridge;
   printf("U-Bridge %d START\n", input.size() );
@@ -50,12 +187,20 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   {
     return make_pair(input.point_list[0],input.point_list[0]);
   }
-  
+
   if(input.size() == 2) {
     Point first(input.point_list[0].x,input.point_list[0].y);
     Point second(input.point_list[1].x,input.point_list[1].y);
-    point_bridge.first=first;
-    point_bridge.second=second;
+    if(first.x<second.x)
+    {
+      point_bridge.first=first;
+      point_bridge.second=second;
+    }
+    else
+    {
+      point_bridge.first=second;
+      point_bridge.second=first;
+    }
     printf("U-Bridge %d END (2PT)\n", input.size() );
     return point_bridge;
   }
@@ -78,8 +223,17 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
     }
     else {
       slope = (right.y-left.y)/(right.x-left.x);
-      temp.first.first = left;
-      temp.first.second = right;
+      if(left.x<right.x)
+      {
+        temp.first.first=left;
+        temp.first.second=right;
+      }
+      else
+      {
+        temp.first.first=right;
+        temp.first.second=left;
+      }
+
       temp.second = slope;
       LR_pairing.push_back(temp);
     }
@@ -89,34 +243,50 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
     candidates.point_list.push_back(input.point_list[input.size()/2]);
   }
 
-  sort(LR_pairing.begin(),LR_pairing.end(),sortbysec);
-
-
-  float K_median = LR_pairing[LR_pairing.size() / 2].second;
+  // sort(LR_pairing.begin(),LR_pairing.end(),sortbysec);
+  if(LR_pairing.size()==0)
+  {
+    return upper_bridge(candidates,x_median);
+  }
+  float K_median = median(LR_pairing);
   printf("K_median: %f\n", K_median );
 
 
-  vector<pair<pair<Point,Point>,float> > small,equal,large;
+  vector<pair<Point,Point> > small,equal,large;
 
   for(auto &it :LR_pairing) {
     printf("%f ", it.second );
     if(it.second < K_median) {
-      small.push_back(it);
-
+      small.push_back(it.first);
     }
-    else if(it.second == K_median) {
-      equal.push_back(it);
+    else if(float_equal(it.second,K_median)) {
+      equal.push_back(it.first);
     }
     else if(it.second > K_median){
-      large.push_back(it);
-    }
-    else {
-      printf("What?\n");
+      large.push_back(it.first);
     }
   }
 
+  cout<<endl<<"small:"<<endl;
+  for(auto &it :small)
+  {
+    cout<<it.first.x<<" "<<it.first.y<<"\t"<<it.second.x<<" "<<it.second.y<<endl;
+  }
+  cout<<endl<<"small ended:"<<endl;
+  cout<<endl<<"equal:"<<endl;
+  for(auto &it :equal)
+  {
+    cout<<it.first.x<<" "<<it.first.y<<"\t"<<it.second.x<<" "<<it.second.y<<endl;
+  }
+  cout<<endl<<"equal ended:"<<endl;
+  cout<<endl<<"large:"<<endl;
+  for(auto &it :large)
+  {
+    cout<<it.first.x<<" "<<it.first.y<<"\t"<<it.second.x<<" "<<it.second.y<<endl;
+  }
+  cout<<endl<<"large ended:"<<endl;
 
-  vector<Point > max;
+  vector<Point> max;
 
   vector<pair<float,Point> > value_k;
 
@@ -147,8 +317,10 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
     }
   }
 
+
+
   //Obtain pk and pm
-  sort(max.begin(),max.end(),Point::ValueCmp);
+  // sort(max.begin(),max.end(),Point::ValueCmp);
 
   cout<<"Max elements:"<<max.size();
   for(auto &itx: max) {
@@ -157,10 +329,10 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   cout<<endl;
   printf("\npkmin and pmmax");
   // Point temp = max[0].second;
-  Point pk_min(max[0]);
+  Point pk_min=calpk_min(max);
   pk_min.print_point();
   // Point temp = max[max.size()-1].second;
-  Point pm_max(max[max.size()-1]);
+  Point pm_max=calpm_max(max);
   pm_max.print_point();
   printf("\n");
   cout<<"x median: "<<x_median<<endl;
@@ -176,17 +348,17 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   if(pm_max.x <= x_median) {
 
     for(auto& it : large) {
-      Point temp(it.first.second.x,it.first.second.y);
+      Point temp(it.second.x,it.second.y);
       candidates.add(temp);
     }
     for(auto& it : equal) {
-      Point temp(it.first.second.x,it.first.second.y);
+      Point temp(it.second.x,it.second.y);
       candidates.add(temp);
     }
     for(auto& it : small) {
-      Point tempf(it.first.first.x,it.first.first.y);
+      Point tempf(it.first.x,it.first.y);
       candidates.add(tempf);
-      Point temps(it.first.second.x,it.first.second.y);
+      Point temps(it.second.x,it.second.y);
       candidates.add(temps);
     }
   }
@@ -194,21 +366,24 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   //h is on the right
   if(pk_min.x > x_median ) {
     for(auto& it : large) {
-      Point tempf(it.first.first.x,it.first.first.y);
+      Point tempf(it.first.x,it.first.y);
       candidates.add(tempf);
-      Point temps(it.first.second.x,it.first.second.y);
+      Point temps(it.second.x,it.second.y);
       candidates.add(temps);
     }
     for(auto& it : equal) {
-      Point temp(it.first.first.x,it.first.first.y);
+      Point temp(it.first.x,it.first.y);
       candidates.add(temp);
     }
     for(auto& it : small) {
-      Point temp(it.first.first.x,it.first.first.y);
+      Point temp(it.first.x,it.first.y);
       candidates.add(temp);
     }
   }
 
+  cout<<"candidates:"<<endl;
+  candidates.print_list();
+  cout<<endl<<endl;
   printf("U-Bridge %d END\n", input.size() );
   return upper_bridge(candidates,x_median);
 }
@@ -216,26 +391,20 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
 ////upper hull algo
 
 LineSet upper_hull(Point p_min, Point p_max, Set input) {
-  printf("U-Hull %d START\n", input.size() );
-  input.print_list();
-
   LineSet con_hull;
-  float x_median = input.median();
-
-  if(p_min.x == p_max.x && p_min.y == p_max.y ) {
+  if((p_min.x == p_max.x && p_min.y == p_max.y) || (input.size()==1)) {
     con_hull.add(p_min);
     printf("Hit edge Equality \n");
     return con_hull;
   }
 
-  if(input.size() == 1 ) {
-    con_hull.add(input.point_list[0]);
-    printf("Hit edge\n");
-    return con_hull;
-  }
+  printf("U-Hull %d START\n", input.size() );
+  // input.print_list();
+
+  float x_median = median(input);
 
   pair<Point,Point> point_bridge = upper_bridge(input,x_median);
-  printf("POINT BRIDGE OBTAINED\n");
+  printf("POINT BRIDGE OBTAINED---------------------------\n");
   point_bridge.first.print_point();
   point_bridge.second.print_point();
   cout<<endl;
@@ -253,28 +422,28 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
   L_dash.add(p_min);
   R_dash.add(p_max);
 
+  cout<<"x_median:"<<x_median<<endl;
+  cout<<"p_min:";
+  p_min.print_point();
+  cout<<"p_max:";
+  p_max.print_point();
+
   //L_dash
   for(auto& it :input.point_list) {
-    Point n(it.x-p_min.x,it.y-p_min.y);
-    Point m(i.x-p_min.x,i.y-p_min.y);
-    float left_sign = n.x*m.y - n.y*m.x;
-    if(left_sign < 0) {
-      Point temp(it.x,it.y);
-      L_dash.add(temp);
-    }
+      float left_sign =(it.y-p_min.y)*(tempi.x-p_min.x) - (it.x-p_min.x)*(tempi.y-p_min.y) ;
+      if(left_sign > 0) {
+        L_dash.add(it);
+     }
   }
   cout<<"printing l dash"<<endl;
   L_dash.print_list();
 
   //R_dash
   for(auto& it :input.point_list) {
-    Point n(it.x-p_max.x,it.y-p_max.y);
-    Point m(j.x-p_max.x,j.y-p_max.y);
-    float right_sign = n.x*m.y - n.y*m.x;
-    if(right_sign > 0) {
-      Point temp(it.x,it.y);
-      R_dash.add(temp);
-    }
+      float left_sign =(it.y-p_min.y)*(tempi.x-p_min.x) - (it.x-p_min.x)*(tempi.y-p_min.y) ;
+      if(left_sign > 0) {
+        R_dash.add(it);
+     }
   }
 
   cout<<"printing r dash"<<endl;
@@ -289,8 +458,7 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
     R_upper_hull.printing();
     cout<<endl;
     con_hull.joining(L_upper_hull);
-    // DONT ADD PT BRIDGE
-    // con_hull->add(point_bridge);
+
     con_hull.joining(R_upper_hull);
 
     cout<< "SIZE CON HULL"<<con_hull.point_list.size()<<endl;
@@ -304,18 +472,18 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 
 LineSet kirk_patrick_seidel(Set input) {
 
-  //TODO: Change a new Con hull object`
   cout<<endl<<"upper:"<<endl;
   Point u_min = input.u_minimum();
   Point u_max = input.u_maximum();
   u_max.print_point();
   u_min.print_point();
+
   LineSet upper = upper_hull(u_min,u_max,input);
   cout<<"upper ended"<<endl<<endl<<endl;
 
 
   Set reflect_input;
-  for(auto &it:input.point_list){ 
+  for(auto &it:input.point_list){
       Point temp(-it.x,-it.y);
       reflect_input.add(temp);
   }
@@ -331,15 +499,13 @@ LineSet kirk_patrick_seidel(Set input) {
   int count=0;
   int n_lower=lower.point_list.size();
 
-
-  //TODO: if you want you can reverse the direction at your own risk
   for(auto &it:lower.point_list){
-      it.x=-it.x; 
+      it.x=-it.x;
       it.y=-it.y;
       if(count==(n_lower-1))
       {
         if(!it.equal(u_min))
-          upper.add(it);        
+          upper.add(it);
       }
 
       else if(count==0)
@@ -377,18 +543,6 @@ int main(int argc, char const *argv[]) {
     // rev_points.add(rev);
   }
 
-
-  
-
-  // //Testing
-  // all_points->sorting();
-  // all_points->print_list();
-  // printf("======\n");
-  // pair<Set*,Set*>* p = all_points->partition();
-  // p->first->print_list();
-  // printf("======\n");
-  // p->second->print_list();
-
   LineSet result = kirk_patrick_seidel(all_points);
 
 
@@ -401,10 +555,6 @@ int main(int argc, char const *argv[]) {
 
   myfile.close();
   inputfile.close();
-
-  // LineSet resultl = kirk_patrick_seidel(rev_points);
-  // resultl.printing();
-
 
   return 0;
 }
