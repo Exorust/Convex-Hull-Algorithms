@@ -4,7 +4,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
+/**
+ * Empty Constructor
+ */
 Set::Set() {
   total_points = 0;
 }
@@ -17,6 +19,10 @@ Set::Set(vector<Point> input) {
   }
 }
 
+/**
+ * Copy Constructor for Set
+ * @param Set& Set to be copied
+ */
 Set::Set(const Set& input) {
   vector<Point>::const_iterator it;
   for(it = input.point_list.begin();it != input.point_list.end();it++) {
@@ -25,10 +31,18 @@ Set::Set(const Set& input) {
   }
 }
 
+/**
+ * Returns the size of the Set
+ * @return SIze of the set in an integer
+ */
 int Set::size() {
   return point_list.size();
 }
 
+/**
+ * Returns the minimum point required by the upper hull
+ * @return Point for the minimum of the upper hull
+ */
 Point Set::u_minimum() {
   Point temp(point_list[0]);
   float x_val = temp.x;
@@ -53,6 +67,10 @@ Point Set::u_minimum() {
   return temp;
 }
 
+/**
+ * Returns the maximum point required by the upper hull
+ * @return Point for the maximum of the upper hull
+ */
 Point Set::u_maximum() {
   Point temp(point_list[0]);
   float x_val = temp.x;
@@ -77,10 +95,13 @@ Point Set::u_maximum() {
   return temp;
 }
 
+/**
+ * Adds a point to the Set
+ * @param Point The point to be added
+ */
 void Set::add(Point p) {
   this-> point_list.push_back(p);
   total_points++;
-  // sorting();
 }
 
 void Set::sorting() {
@@ -92,6 +113,9 @@ void Set::sorting() {
 
 //median function------------------------------------------------------------------------------
 
+/**
+ * Prints the set
+ */
 void Set::print_list() {
   vector<Point>::iterator it;
   for(it = this->point_list.begin();it != this->point_list.end();it++) {
@@ -100,6 +124,10 @@ void Set::print_list() {
   }
 }
 
+/**
+ * Joins two sets
+ * @param Set joined set
+ */
 void Set::joining(const Set input) {
   vector<Point>::const_iterator it;
   for(it = input.point_list.begin();it != input.point_list.end();it++) {
@@ -109,6 +137,11 @@ void Set::joining(const Set input) {
   // sorting();
 }
 
+/**
+ * Confirms the minimum element of the set
+ * @param  Point The point to verify if its the minimum
+ * @return       Truth value
+ */
 bool Set::ismin(Point p) {
   // sorting();
   vector<Point>::iterator it = this->point_list.begin();
@@ -119,6 +152,11 @@ bool Set::ismin(Point p) {
   return false;
 }
 
+/**
+ * Confirms the maximum element of the set
+ * @param  Point The point to verify if its the maximum
+ * @return       Truth value
+ */
 bool Set::ismax(Point p) {
   // sorting();
   vector<Point>::iterator it = this->point_list.end();
@@ -131,7 +169,10 @@ bool Set::ismax(Point p) {
 }
 
 
-
+/**
+ * Partitions the set into L and R
+ * @return Returns a pair of Sets
+ */
 pair<Set*,Set*>* Set::partition() {
   // sorting();
   int len = point_list.size();

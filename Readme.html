@@ -1,0 +1,41 @@
+<h1 id="comparisionofconvexhullalgorithm">Comparision of Convex Hull Algorithm</h1>
+
+<p>We have implemented 3 algorithms, Graham Scan, Kirk Patrick Seidel, and Jarvis March algorithms to find the convex hull in two dimensions.</p>
+
+<table style="width:100%">
+ <tr>
+   <th>Algorithm</th>
+   <th>Complexity</th>
+ </tr>
+ <tr>
+   <td>Graham Scan Algorithm </td>
+   <td>Smith</td>
+   <td>50</td>
+ </tr>
+ <tr>
+   <td>Eve</td>
+   <td>Jackson</td>
+   <td>94</td>
+ </tr>
+</table>
+
+<p><td>   Algorithm                 <td>Complexity <td>
+<td>-----------------------------<td>-----------<td>
+       <td> O(nlog(n))<td>
+<td>Kirk Patrick Seidel Algorithm<td>O(nlog(h)) <td>
+<td>Jarvis March Algorithm       <td> O(n^2)    <td></p>
+
+<p>We have obtained these runtimes for the following algorithms.</p>
+
+<p><td>Size<td>Graham Scan Algorithm<td>Kirk Patrick Seidel Algorithm<td> Jarvis March Algorithm<td>
+<td>-<td>-<td>-<td>-<td>
+<td>10<td>0.004<td>0.009<td>0.004<td>
+<td>100<td>0.004<td>0.009<td>0.004<td>
+<td>1000<td>0.010<td>0.011<td>0.019<td>
+<td>10000<td>0.048<td>0.026<td>0.147<td></p>
+
+<p>[*In seconds (4 is also the least possible value.)]</p>
+
+<p>As we can see the Kirk Patrick Seidel Algorithm is slightly expensive while initializing for smaller datasets, but for larger datasets gives quite good performance.</p>
+
+<p>As we can see, during the starting the time taken for Graham Scan and Jarvis March, but after 1000 points we can see the disparity in the time taken to compute.</p>

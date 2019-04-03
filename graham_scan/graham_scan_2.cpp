@@ -3,7 +3,9 @@ using namespace std;
 
 ofstream myfile;
 
-//a class for point
+/**
+ * Class for a Point
+ */
 class Point{
 	public:
 		int x;
@@ -14,20 +16,22 @@ class Point{
 		int polar(Point &pt2,Point zero);
 };
 
-
-class Stack 
-{ 
+/**
+ * Stack for the points
+ */
+class Stack
+{
     int top;
-    int capacity; 
-public: 
-    int *pt;    //Maximum size of Stack 
-  	
-  	Stack(int capacity); 
-    bool push(int x); 
+    int capacity;
+public:
+    int *pt;    //Maximum size of Stack
+
+  	Stack(int capacity);
+    bool push(int x);
     void pop();
-    int toppt(); 
+    int toppt();
     bool empty();
-    int nextToTop(); 
+    int nextToTop();
 };
 
 class Scatter{
@@ -41,7 +45,11 @@ public:
 };
 
 
-//swap the point with another point
+
+/**
+ * Swaps points
+ * @param p [description]
+ */
 void Point::swap_pt(Point* pt)
 {
 	this->x=this->x+pt->x-(pt->x=this->x);
@@ -49,13 +57,22 @@ void Point::swap_pt(Point* pt)
 	this->discard=this->discard+pt->discard-(pt->discard=this->discard);
 }
 
-//calculating distance from another point
+/**
+ * calculating distance from another point
+ * @param  zero Specified point of the null
+ * @return     	The distance of the point
+ */
 int Point::dist(Point zero)
 {
 	return (this->x-zero.x)*(this->x-zero.x)+(this->x-zero.x)*(this->x-zero.x);
 }
 
-
+/**
+ * Calculates the polar value
+ * @param  pt2  the point whose polar we want
+ * @param  zero Origin point
+ * @return      Polar value
+ */
 int Point::polar(Point &pt2,Point zero)
 {
 	int slope_diff=((this->y-zero.y)*(pt2.x-zero.x)-(pt2.y-zero.y)*(this->x-zero.x));
@@ -74,71 +91,100 @@ int Point::polar(Point &pt2,Point zero)
 }
 
 
- 
- 
+
+/**
+ * Constructor
+ * @param capacity Size of the stack
+ */
 Stack::Stack(int capacity)
 {
 	this->top=-1;
 	this->capacity=capacity;
 	this->pt= new int[capacity];
-} 
+}
 
-
-bool Stack::push(int x) 
-{ 
+/**
+ * Pushes the into the stack
+ * @param  x integer to insert
+ * @return   Success value
+ */
+bool Stack::push(int x)
+{
     this->pt[++top] = x;
     return true;
-} 
-
-int Stack::toppt()
-{ 
-    int x = this->pt[top]; 
-    return x; 
 }
-  
-void Stack::pop() 
-{ 
-    if (top < 0) 
-    { 
-        cout << "Stack Underflow"; 
-    } 
+
+/**
+ * The top value of the stack
+ * @return the top of the stack
+ */
+int Stack::toppt()
+{
+    int x = this->pt[top];
+    return x;
+}
+
+/**
+ * Pops the top of the stack
+ */
+void Stack::pop()
+{
+    if (top < 0)
+    {
+        cout << "Stack Underflow";
+    }
 
     else
-    { 
-        top--; 
-    } 
-} 
-  
-bool Stack::empty() 
-{ 
-    return (top < 0); 
-} 
-  
+    {
+        top--;
+    }
+}
+/**
+ * Checks if the stack is empty
+ * @return [description]
+ */
+bool Stack::empty()
+{
+    return (top < 0);
+}
 
-//to find next to top element in stack
+
+/**
+ * To find next to top element in stack
+ * @return the next to top element
+ */
 int Stack::nextToTop()
 {
 
-    int p = this->toppt(); 
-    this->pop(); 
-    int res = this->toppt(); 
-    this->push(p); 
-    return res; 
+    int p = this->toppt();
+    this->pop();
+    int res = this->toppt();
+    this->push(p);
+    return res;
 }
 
 
-//constructor of scatter
+/**
+ * constructor of scatter
+ * @param points The set of points
+ * @param n			 the total points
+ */
 Scatter::Scatter(Point points[],int n)
 {
 	this->points=points;
 	this->n=n;
 }
 
-//a util for point_sort function
-int Scatter::partition (int low, int high) 
-{ 
-    Point *pivot = &this->points[high]; 
-  	
+/**
+ * util for point_sort function
+ * @param  low  Max value
+ * @param  high Min value
+ * @return low  The lowest partition
+ */
+int Scatter::partition (int low, int high)
+{
+    Point *pivot = &this->points[high];
+
   	high--;
     while(low <= high)
     {
@@ -150,10 +196,14 @@ int Scatter::partition (int low, int high)
     }
     this->points[low].swap_pt(pivot);
 
-    return low;    
+    return low;
 }
 
-//sorting the point w.r.t pt0 anticlockwise direction
+/**
+ * sorting the point w.r.t pt0 anticlockwise direction
+ * @param low  Current Low
+ * @param high Current High
+ */
 void Scatter::point_sort(int low,int high)
 {
 	if(low < high)
@@ -164,7 +214,9 @@ void Scatter::point_sort(int low,int high)
 	}
 }
 
-//function for finding hull
+/**
+ * function for finding hull
+ */
 void Scatter::graham_scan()
 {
 	point_sort(1,this->n-1);
@@ -187,15 +239,15 @@ void Scatter::graham_scan()
 		return;
 	}
 
-	for (int i = 3; i < this->n; i++) 
+	for (int i = 3; i < this->n; i++)
    	{
    		if(!(this->points[i].discard))
-   		{  
+   		{
       		while ((points[st.toppt()].polar(points[i],points[st.nextToTop()])))
       		{
       			points[st.toppt()].discard=1;
          		st.pop();
-         	} 
+         	}
       		st.push(i);
       	}
    	}
@@ -204,7 +256,7 @@ void Scatter::graham_scan()
    	for (int i = 0; i < this->n; ++i)
    	{
    		Point p=points[i];
-   		myfile<<(p.x)<<","<<(p.y)<<","<<(p.discard)<<endl; 
+   		myfile<<(p.x)<<","<<(p.y)<<","<<(p.discard)<<endl;
    	}
    	myfile<<(points[0].x)<<","<<(points[0].y)<<","<<(points[0].discard)<<endl;
 }
@@ -242,7 +294,7 @@ int main()
 }
 
 /*testcase
-8                                                 
+8
 0 3
 1 1
 2 2

@@ -10,7 +10,11 @@ using namespace std;
 ofstream myfile;
 ofstream inputfile;
 
-
+/**
+ * Caluclates pk_min
+ * @param  max Maximum point
+ * @return     Min Point
+ */
 Point calpk_min(vector<Point>max){
   Point min_point(max[0].x,max[0].y);
   for(auto &it:max)
@@ -24,6 +28,11 @@ Point calpk_min(vector<Point>max){
   return min_point;
 }
 
+/**
+ * Caluclates pk_max
+ * @param  max Minimum point
+ * @return     Max Point
+ */
 Point calpm_max(vector<Point>max){
   Point min_point(max[0].x,max[0].y);
   for(auto &it:max)
@@ -36,6 +45,12 @@ Point calpm_max(vector<Point>max){
   }
   return min_point;
 }
+/**
+ * A function to compare two floats
+ * @param  x X parameters of the point
+ * @param  y Y parameters of the point
+ * @return   True/false value of the equality
+ */
 bool float_equal(float x, float y)
 {
   if(x<= y+0.00001 && x >= y-0.00001)
@@ -55,27 +70,27 @@ void swap(float *a, float *b)
 
 // It searches for x in arr[l..r], and partitions the array
 // around x.
-int partition(float arr[], int l, int r, float x)
+int partition(float f_array[], int l, int r, float x)
 {
-    // Search for x in arr[l..r] and move it to end
-    int i;
-    for (i=l; i<r; i++)
-        if (arr[i] == x)
+    // Search for x in f_array[l..r] and move it to end
+    int index;
+    for (index=l; index<r; index++)
+        if (f_array[index] == x)
            break;
-    swap(&arr[i], &arr[r]);
+    swap(&f_array[index], &f_array[r]);
 
-    // Standard partition algorithm
-    i = l;
+    // Standard partindextindexon algorindexthm
+    index = l;
     for (int j = l; j <= r - 1; j++)
     {
-        if (arr[j] <= x)
+        if (f_array[j] <= x)
         {
-            swap(&arr[i], &arr[j]);
-            i++;
+            swap(&f_array[index], &f_array[j]);
+            index++;
         }
     }
-    swap(&arr[i], &arr[r]);
-    return i;
+    swap(&f_array[index], &f_array[r]);
+    return index;
 }
 
 
@@ -91,7 +106,8 @@ float findMedian(float arr[], int n)
 // linear time. ASSUMPTION: ALL ELEMENTS IN ARR[] ARE DISTINCT
 float kthSmallest(float arr[], int l, int r, int k)
 {
-    // If k is smaller than number of elements in array
+    // If k is smaller than number of elements in arra
+                                 y
     if (k > 0 && k <= r - l + 1)
     {
         int n = r-l+1; // Number of elements in arr[l..r]
@@ -100,8 +116,9 @@ float kthSmallest(float arr[], int l, int r, int k)
         // of every group and store it in median[] array.
         int i;
         float median[(n+4)/5]; // There will be floor((n+4)/5) groups;
-        for (i=0; i<n/5; i++)
+        for (i=0; i<n/5; i++) {
             median[i] = findMedian(arr+l+i*5, 5);
+          }
         if (i*5 < n) //For last group with less than 5 elements
         {
             median[i] = findMedian(arr+l+i*5, n%5);
@@ -111,16 +128,16 @@ float kthSmallest(float arr[], int l, int r, int k)
         // Find median of all medians using recursive call.
         // If median[] has only one element, then no need
         // of recursive call
-        float medOfMed = (i == 1)? median[i-1]:
-                                 kthSmallest(median, 0, i-1, i/2);
+        float medOfMed = (i == 1)? median[i-1]:kthSmallest(median, 0, i-1, i/2);
 
         // Partition the array around a random element and
         // get position of pivot element in sorted array
         int pos = partition(arr, l, r, medOfMed);
 
         // If position is same as k
-        if (pos-l == k-1)
+        if (pos-l == k-1) {
             return arr[pos];
+          }
         if (pos-l > k-1)  // If position is more, recur for left
             return kthSmallest(arr, l, pos-1, k);
 
@@ -170,6 +187,13 @@ bool sortbysecpf(const pair<float,Point> &a, const  pair<float,Point> &b) {
     return (a.first < b.first);
 }
 
+/**
+ * Caluculates the vector cross product of the 3 points
+ * @param  p1 Base Points
+ * @param  p2 Other Points
+ * @param  p  Point to verify
+ * @return    the x coordinate of the resultant vector
+ */
 float sign(Point* p1, Point* p2, Point* p) {
   Point n(p->x-p1->x,p->y-p1->y);
   Point m(p2->x-p1->x,p2->y-p1->y);
@@ -177,6 +201,11 @@ float sign(Point* p1, Point* p2, Point* p) {
   return d;
 }
 
+/**
+ * Caluclates the upper bridge
+ * @param input    [description]
+ * @param x_median [description]
+ */
 pair<Point,Point> upper_bridge(Set input, float x_median) {
   pair<Point,Point> point_bridge;
   printf("U-Bridge %d START\n", input.size() );
@@ -388,8 +417,14 @@ pair<Point,Point> upper_bridge(Set input, float x_median) {
   return upper_bridge(candidates,x_median);
 }
 
-////upper hull algo
 
+/**
+ * Generates the upper hull.
+ * @param  p_min Left most Point
+ * @param  p_max Right most Point
+ * @param  input Set of points
+ * @return       Returns the LineSet
+ */
 LineSet upper_hull(Point p_min, Point p_max, Set input) {
   LineSet con_hull;
   if((p_min.x == p_max.x && p_min.y == p_max.y) || (input.size()==1)) {
@@ -470,6 +505,11 @@ LineSet upper_hull(Point p_min, Point p_max, Set input) {
 
 }
 
+/**
+ * Kirk Partrick Seidel Algorithm
+ * @param  input Original Set of points
+ * @return       The final LineSet
+ */
 LineSet kirk_patrick_seidel(Set input) {
 
   cout<<endl<<"upper:"<<endl;
